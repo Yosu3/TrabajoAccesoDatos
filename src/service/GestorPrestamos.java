@@ -69,4 +69,42 @@ public class GestorPrestamos {
 
 		return "Préstamo realizado correctamente.";
 	}
+
+	public String devolverRecurso(String idRecurso) {
+
+		Prestamo prestamo = buscarPrestamoActivo(idRecurso);
+
+		if (prestamo == null) {
+			return "ERROR: No existe un préstamo activo para ese recurso.";
+		}
+
+		prestamo.getRecurso().setPrestado(false);
+
+		prestamo.setEstadoPrestamo("DEVUELTO");
+
+		prestamo.setFechaDevolucion(java.time.LocalDate.now());
+
+		return "Recurso devuelto correctamente.";
+	}
+
+	public List<Prestamo> obtenerPrestamosActivos() {
+		List<Prestamo> activos = new ArrayList<>();
+		for (Prestamo p : prestamos) {
+			if (p.getEstadoPrestamo().equals("ACTIVO")) {
+				activos.add(p);
+			}
+		}
+		return activos;
+	}
+
+	public List<Prestamo> obtenerPrestamosDeUsuario(String idUsuario) {
+		List<Prestamo> resultado = new ArrayList<>();
+		for (Prestamo p : prestamos) {
+			if (p.getUsuario().getId().equals(idUsuario)) {
+				resultado.add(p);
+			}
+		}
+		return resultado;
+	}
+
 }
