@@ -50,4 +50,24 @@ public class RecursoService {
         }
         return resultado;
     }
+    
+    public ArrayList<Recurso> obtenerDisponibles() {
+        ArrayList<Recurso> resultado = new ArrayList<>();
+        for (Recurso r : lista) {
+            if (!r.isPrestado()) {
+                resultado.add(r);
+            }
+        }
+        return resultado;
+    }
+
+    public ArrayList<Recurso> filtrarPorTipo(Class<?> tipo) {
+        ArrayList<Recurso> resultado = new ArrayList<>();
+        for (Recurso r : lista) {
+            if (tipo.isInstance(r)) {
+                resultado.add(r);
+            }
+        }
+        return resultado;
+    }
 }

@@ -28,7 +28,8 @@ public class Main {
                 case 1 -> menuRecursos();
                 case 2 -> menuUsuarios();
                 case 3 -> menuPrestamos();
-                case 4 -> {
+                case 4 -> menuConsultas();
+                case 5 -> {
                     System.out.println("Saliendo del sistema...");
                     salir = true;
                 }
@@ -43,7 +44,8 @@ public class Main {
         System.out.println("1. Gestión de Recursos");
         System.out.println("2. Gestión de Usuarios");
         System.out.println("3. Gestión de Préstamos");
-        System.out.println("4. Salir");
+        System.out.println("4. Consultas y Búsquedas");
+        System.out.println("5. Salir");
     }
     
     private static void menuRecursos() {
@@ -173,6 +175,63 @@ public class Main {
             }
             
             case 3 -> {}
+            default -> System.out.println("Opción no válida.");
+        }
+    }
+    
+    private static void menuConsultas() {
+        System.out.println("\n--- CONSULTAS Y BÚSQUEDAS ---");
+        System.out.println("1. Buscar recurso por título");
+        System.out.println("2. Ver recursos disponibles");
+        System.out.println("3. Ver préstamos activos");
+        System.out.println("4. Ver préstamos de un usuario");
+        System.out.println("5. Filtrar recursos por tipo");
+        System.out.println("6. Volver");
+
+        int opcion = leerEntero("Seleccione una opción: ");
+        switch (opcion) {
+        
+            case 1 -> {
+                String titulo = leerTexto("Introduzca el título o parte de él: ");
+                var resultados = recursoService.buscarPorTitulo(titulo);
+                if (resultados.isEmpty()) {
+                    System.out.println("No se encontraron recursos.");
+                } else {
+                    resultados.forEach(System.out::println);
+                }
+            }
+            
+            case 2 -> {
+                System.out.println("\n-- Recursos Disponibles --");
+                var disp = recursoService.obtenerDisponibles();
+                if (disp.isEmpty()) System.out.println("No hay recursos disponibles.");
+                else disp.forEach(System.out::println);
+            }
+            
+            case 3 -> {
+                System.out.println("\n-- Préstamos Activos --");
+                var activos = gestorPrestamos.obtenerPrestamosActivos();
+                if (activos.isEmpty()) System.out.println("No hay préstamos activos.");
+                else activos.forEach(System.out::println);
+            }
+            
+            case 4 -> {
+                String idUser = leerTexto("ID Usuario: ");
+                var userPrestamos = gestorPrestamos.obtenerPrestamosDeUsuario(idUser);
+                if (userPrestamos.isEmpty()) System.out.println("El usuario no tiene préstamos registrados.");
+                else userPrestamos.forEach(System.out::println);
+            }
+            
+            case 5 -> {
+                System.out.println("1. Libros | 2. Películas | 3. Videojuegos");
+                int tipo = leerEntero("Seleccione tipo: ");
+                if (tipo == 1) recursoService.filtrarPorTipo(Libro.class).forEach(System.out::println);
+                else if (tipo == 2) recursoService.filtrarPorTipo(Pelicula.class).forEach(System.out::println);
+                else if (tipo == 3) recursoService.filtrarPorTipo(Videojuego.class).forEach(System.out::println);
+                else System.out.println("Tipo no válido.");
+            }
+            
+            case 6 -> {}
             default -> System.out.println("Opción no válida.");
         }
     }
