@@ -7,6 +7,7 @@ import model.Recurso;
 import model.Usuario;
 import model.Videojuego;
 import service.GestionUsuarios;
+import service.GestorPrestamos;
 import service.RecursoService;
 
 public class Main {
@@ -14,6 +15,7 @@ public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static final RecursoService recursoService = new RecursoService();
     private static final GestionUsuarios gestionUsuarios = new GestionUsuarios();
+    private static final GestorPrestamos gestorPrestamos = new GestorPrestamos(gestionUsuarios.listarUsuarios(), recursoService.obtenerTodos());
 
     public static void main(String[] args) {
         boolean salir = false;
@@ -25,7 +27,7 @@ public class Main {
             switch (opcion) {
                 case 1 -> menuRecursos();
                 case 2 -> menuUsuarios();
-                case 3 -> System.out.println("Aqui va el Submenú Préstamso");
+                case 3 -> menuPrestamos();
                 case 4 -> {
                     System.out.println("Saliendo del sistema...");
                     salir = true;
@@ -33,9 +35,10 @@ public class Main {
                 default -> System.out.println("Opción no válida.");
             }
         }
-    }
+    } 
+           
 
-    private static void mostrarMenuPrincipal() {
+	private static void mostrarMenuPrincipal() {
         System.out.println("\n=== GESTIÓN DE BIBLIOTECA ===");
         System.out.println("1. Gestión de Recursos");
         System.out.println("2. Gestión de Usuarios");
@@ -74,7 +77,7 @@ public class Main {
     		int duracion = leerEntero("Duración (min): ");
     		recursoService.agregar(new Pelicula(id, titulo, anio, false, director, duracion));
     		System.out.println("Película añadida correctamente.");
-    		}
+    	}
     	
     	case 3 -> {
     		String id = leerTexto("ID: ");
@@ -148,9 +151,32 @@ public class Main {
     		default -> System.out.println("Opción no válida.");
     	}
     }
-    	
-    	
 
+    private static void menuPrestamos() {
+        System.out.println("\n--- GESTIÓN DE PRÉSTAMOS ---");
+        System.out.println("1. Realizar Préstamo");
+        System.out.println("2. Devolver Recurso");
+        System.out.println("3. Volver");
+
+        int opcion = leerEntero("Seleccione una opción: ");
+        switch (opcion) {
+        
+            case 1 -> {
+                String idUsuario = leerTexto("ID Usuario: ");
+                String idRecurso = leerTexto("ID Recurso: ");
+                System.out.println(gestorPrestamos.realizarPrestamo(idUsuario, idRecurso));
+            }
+            
+            case 2 -> {
+                String idRecurso = leerTexto("ID Recurso a devolver: ");
+                System.out.println(gestorPrestamos.devolverPrestamo(idRecurso));
+            }
+            
+            case 3 -> {}
+            default -> System.out.println("Opción no válida.");
+        }
+    }
+    	
     private static String leerTexto(String mensaje) {
         System.out.print(mensaje);
         return scanner.nextLine().trim();
