@@ -2,13 +2,21 @@ package service;
 
 import model.Recurso;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecursoService {
-    
+
     private ArrayList<Recurso> lista = new ArrayList<>();
+
+    public RecursoService() {
+       
+        List<Recurso> cargados = FicheroRecursos.cargarRecursos();
+        lista.addAll(cargados);
+    }
 
     public void agregar(Recurso r) {
         lista.add(r);
+        guardar(); 
     }
 
     public ArrayList<Recurso> obtenerTodos() {
@@ -27,7 +35,9 @@ public class RecursoService {
     public boolean eliminar(String id) {
         Recurso r = buscarPorId(id);
         if (r != null) {
-            return lista.remove(r);
+            lista.remove(r);
+            guardar(); 
+            return true;
         }
         return false;
     }
@@ -40,5 +50,9 @@ public class RecursoService {
             }
         }
         return resultado;
+    }
+
+    private void guardar() {
+        FicheroRecursos.guardarRecursos(lista);
     }
 }
