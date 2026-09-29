@@ -1,10 +1,19 @@
 package view;
 
 import java.util.Scanner;
+import model.Libro;
+import model.Pelicula;
+import model.Recurso;
+import model.Usuario;
+import model.Videojuego;
+import service.GestionUsuarios;
+import service.RecursoService;
 
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
+    private static final RecursoService recursoService = new RecursoService();
+    private static final GestionUsuarios gestionUsuarios = new GestionUsuarios();
 
     public static void main(String[] args) {
         boolean salir = false;
@@ -14,9 +23,9 @@ public class Main {
             int opcion = leerEntero("Seleccione una opción: ");
 
             switch (opcion) {
-                case 1 -> System.out.println("Submenú Recursos en desarrollo");
-                case 2 -> System.out.println("Submenú Usuarios en desarrollo");
-                case 3 -> System.out.println("Submenú Préstamos en desarrollo");
+                case 1 -> menuRecursos();
+                case 2 -> menuUsuarios();
+                case 3 -> System.out.println("Aqui va el Submenú Préstamso");
                 case 4 -> {
                     System.out.println("Saliendo del sistema...");
                     salir = true;
@@ -33,6 +42,114 @@ public class Main {
         System.out.println("3. Gestión de Préstamos");
         System.out.println("4. Salir");
     }
+    
+    private static void menuRecursos() {
+    	System.out.println("\n--- GESTIÓN DE RECURSOS ---");
+    	System.out.println("1. Crear Libro");
+    	System.out.println("2. Crear Película");
+    	System.out.println("3. Crear Videojuego");
+    	System.out.println("4. Listar Recursos");
+    	System.out.println("5. Buscar Recurso por ID");
+    	System.out.println("6. Eliminar Recurso");
+    	System.out.println("7. Volver");
+    	
+    	int opcion = leerEntero("Seleccione una opción: ");
+    	switch (opcion) {
+    	
+    	case 1 -> {
+    		String id = leerTexto("ID: ");
+    		String titulo = leerTexto("Título: ");
+    		int anio = leerEntero("Año: ");
+    		String autor = leerTexto("Autor: ");
+    		int paginas = leerEntero("Páginas: ");
+    		recursoService.agregar(new Libro(id, titulo, anio, false, autor, paginas));
+    		System.out.println("Libro añadido correctamente.");
+    	}
+    	
+    	case 2 -> {
+    		String id = leerTexto("ID: ");
+    		String titulo = leerTexto("Título: ");
+    		int anio = leerEntero("Año: ");
+    		String director = leerTexto("Director: ");
+    		int duracion = leerEntero("Duración (min): ");
+    		recursoService.agregar(new Pelicula(id, titulo, anio, false, director, duracion));
+    		System.out.println("Película añadida correctamente.");
+    		}
+    	
+    	case 3 -> {
+    		String id = leerTexto("ID: ");
+    		String titulo = leerTexto("Título: ");
+    		int anio = leerEntero("Año: ");
+    		String plataforma = leerTexto("Plataforma: ");
+    		int pegi = leerEntero("PEGI: ");
+    		recursoService.agregar(new Videojuego(id, titulo, anio, false, plataforma, pegi));
+    		System.out.println("Videojuego añadido correctamente.");
+    		}
+    	
+    	case 4 -> {
+    		System.out.println("\n-- Lista de Recursos --");
+    		for (Recurso r : recursoService.obtenerTodos()) {
+    		System.out.println(r);
+    		}
+    	}
+    	
+    	case 5 -> {
+    		String id = leerTexto("ID a buscar: ");
+    		Recurso r = recursoService.buscarPorId(id);
+    		System.out.println(r != null ? r : "Recurso no encontrado.");
+    		}
+    		
+    	case 6 -> {
+    		String id = leerTexto("ID a eliminar: ");
+    		System.out.println(recursoService.eliminar(id) ? "Eliminado correctamente." : "No se encontró el recurso.");
+    		}
+    	
+    	case 7 -> {}
+    	default -> System.out.println("Opción no válida.");
+    	}
+    }
+    
+    private static void menuUsuarios() {
+    	System.out.println("\n--- GESTIÓN DE USUARIOS ---");
+    	System.out.println("1. Crear Usuario");
+    	System.out.println("2. Listar Usuarios");
+    	System.out.println("3. Buscar Usuario por ID");
+    	System.out.println("4. Eliminar Usuario");
+    	System.out.println("5. Volver");
+    	
+    	int opcion = leerEntero("Seleccione una opción: ");
+    	switch (opcion) {
+    	
+    	case 1 -> {
+    		String id = leerTexto("ID: ");
+    		String nombre = leerTexto("Nombre: ");
+    		String email = leerTexto("Email: ");
+    		System.out.println(gestionUsuarios.crearUsuario(new Usuario(id, nombre, email)) ? "Usuario creado." : "Error al crear usuario.");
+    	}
+    	
+    	case 2 -> {
+    		System.out.println("\n-- Lista de Usuarios --");
+    		for (Usuario u : gestionUsuarios.listarUsuarios()) {
+    		System.out.println(u);
+    	}
+    }
+    	case 3 -> {
+    		String id = leerTexto("ID a buscar: ");
+    		Usuario u = gestionUsuarios.buscarPorId(id);
+    		System.out.println(u != null ? u : "Usuario no encontrado.");
+    	}
+    	
+    	case 4 -> {
+    		String id = leerTexto("ID a eliminar: ");
+    		System.out.println(gestionUsuarios.eliminarUsuario(id) ? "Usuario eliminado." : "Usuario no encontrado.");
+    	}
+    	
+    		case 5 -> {}
+    		default -> System.out.println("Opción no válida.");
+    	}
+    }
+    	
+    	
 
     private static String leerTexto(String mensaje) {
         System.out.print(mensaje);
