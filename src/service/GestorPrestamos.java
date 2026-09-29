@@ -1,5 +1,6 @@
 package service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +15,9 @@ public class GestorPrestamos {
 	private List<Recurso> recursos;
 
 	public GestorPrestamos(List<Usuario> usuarios, List<Recurso> recursos) {
-		this.prestamos = new ArrayList<>();
 		this.usuarios = usuarios;
 		this.recursos = recursos;
+		this.prestamos = new ArrayList<>(FicheroPrestamos.cargarPrestamos(usuarios, recursos));
 	}
 
 	private Usuario buscarUsuario(String id) {
@@ -67,10 +68,12 @@ public class GestorPrestamos {
 		Prestamo p = new Prestamo(usuario, recurso, "ACTIVO");
 		prestamos.add(p);
 
+		FicheroPrestamos.guardarPrestamos(prestamos);
+
 		return "Préstamo realizado correctamente.";
 	}
 
-	public String devolverRecurso(String idRecurso) {
+	public String devolverPrestamo(String idRecurso) {
 
 		Prestamo prestamo = buscarPrestamoActivo(idRecurso);
 
@@ -79,12 +82,11 @@ public class GestorPrestamos {
 		}
 
 		prestamo.getRecurso().setPrestado(false);
-
 		prestamo.setEstadoPrestamo("DEVUELTO");
+		prestamo.setFechaDevolucion(LocalDate.now());
+		FicheroPrestamos.guardarPrestamos(prestamos);
 
-		prestamo.setFechaDevolucion(java.time.LocalDate.now());
-
-		return "Recurso devuelto correctamente.";
+		return "Préstamo devuelto correctamente.";
 	}
 
 	public List<Prestamo> obtenerPrestamosActivos() {
