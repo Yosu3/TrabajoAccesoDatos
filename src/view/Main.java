@@ -62,7 +62,7 @@ public class Main {
     	switch (opcion) {
     	
     	case 1 -> {
-    		String id = leerTexto("ID: ");
+    		String id = leerIdUnicoRecurso("ID: ");
     		String titulo = leerTexto("Título: ");
     		int anio = leerEntero("Año: ");
     		String autor = leerTexto("Autor: ");
@@ -72,7 +72,7 @@ public class Main {
     	}
     	
     	case 2 -> {
-    		String id = leerTexto("ID: ");
+    		String id = leerIdUnicoRecurso("ID: ");
     		String titulo = leerTexto("Título: ");
     		int anio = leerEntero("Año: ");
     		String director = leerTexto("Director: ");
@@ -82,7 +82,7 @@ public class Main {
     	}
     	
     	case 3 -> {
-    		String id = leerTexto("ID: ");
+    		String id = leerIdUnicoRecurso("ID: ");
     		String titulo = leerTexto("Título: ");
     		int anio = leerEntero("Año: ");
     		String plataforma = leerTexto("Plataforma: ");
@@ -126,7 +126,7 @@ public class Main {
     	switch (opcion) {
     	
     	case 1 -> {
-    		String id = leerTexto("ID: ");
+    		String id = leerIdUnicoUsuario("ID: ");
     		String nombre = leerTexto("Nombre: ");
     		String email = leerTexto("Email: ");
     		System.out.println(gestionUsuarios.crearUsuario(new Usuario(id, nombre, email)) ? "Usuario creado." : "Error al crear usuario.");
@@ -248,6 +248,32 @@ public class Main {
                 return Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
                 System.out.println("ERROR: Debe introducir un número entero válido.");
+            }
+        }
+    }
+    
+    private static String leerIdUnicoRecurso(String mensaje) {
+        while (true) {
+            String id = leerTexto(mensaje);
+            if (id.isEmpty()) {
+                System.out.println("ERROR: El ID no puede estar vacío.");
+            } else if (recursoService.buscarPorId(id) != null) {
+                System.out.println("ERROR: Ya existe un recurso con este ID.");
+            } else {
+                return id;
+            }
+        }
+    }
+
+    private static String leerIdUnicoUsuario(String mensaje) {
+        while (true) {
+            String id = leerTexto(mensaje);
+            if (id.isEmpty()) {
+                System.out.println("ERROR: El ID no puede estar vacío.");
+            } else if (gestionUsuarios.buscarPorId(id) != null) {
+                System.out.println("ERROR: Ya existe un usuario con este ID.");
+            } else {
+                return id;
             }
         }
     }
