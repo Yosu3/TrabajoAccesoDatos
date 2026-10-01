@@ -136,5 +136,3 @@ Duplicidad de datos al cargar ficheros: al conectar la persistencia con los serv
 Integración de ramas: al trabajar varias personas en paralelo en modelos, ficheros y préstamos, la unión de ramas dio problemas y hubo que coordinarse para dejar main funcional.
 Identidades de Git distintas: algunos commits se hicieron con configuraciones de usuario distintas en ordenadores diferentes, y lo corregimos configurando cada uno su propio nombre y correo.
 Conflicto controlado: (completar aquí: qué ramas chocaron, en qué fichero y cómo se resolvió).
-
-Nota: version revisada por Mateo
