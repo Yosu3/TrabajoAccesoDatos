@@ -92,7 +92,7 @@ public class Main {
     		String titulo = leerTexto("Título: ");
     		int anio = leerEnteroPositivo("Año (mínimo 1950): ", 1950);
     		String plataforma = leerTexto("Plataforma: ");
-    		int pegi = leerEnteroPositivo("PEGI (0 a 18): ", 0);
+    		int pegi = leerEnteroRango("PEGI (0 a 18): ", 0, 18);
     	    Videojuego videojuego = new Videojuego(id, titulo, anio, false, plataforma, pegi);
     		recursoService.agregar(videojuego);
     	    System.out.println("\n¡Videojuego añadido correctamente!");
@@ -204,10 +204,13 @@ public class Main {
         System.out.println("\n--- CONSULTAS Y BÚSQUEDAS ---");
         System.out.println("1. Buscar recurso por título");
         System.out.println("2. Ver recursos disponibles");
-        System.out.println("3. Ver préstamos activos");
-        System.out.println("4. Ver préstamos de un usuario");
-        System.out.println("5. Filtrar recursos por tipo");
-        System.out.println("6. Volver");
+        System.out.println("3. Ver recursos prestados");
+        System.out.println("4. Ver préstamos activos");
+        System.out.println("5. Ver préstamos de un usuario");
+        System.out.println("6. Filtrar recursos por tipo");
+        System.out.println("7. Buscar recursos por rango de años"); 
+        System.out.println("8. Buscar libros por autor");
+        System.out.println("9. Volver");
 
         int opcion = leerEntero("Seleccione una opción: ");
         switch (opcion) {
@@ -230,20 +233,42 @@ public class Main {
             }
             
             case 3 -> {
+                System.out.println("\n-- Recursos Prestados --");
+                var prestados = recursoService.obtenerPrestados();
+                if (prestados.isEmpty()) System.out.println("No hay recursos prestados actualmente.");
+                else prestados.forEach(System.out::println);
+            }
+            
+            case 4 -> {
                 System.out.println("\n-- Préstamos Activos --");
                 var activos = gestorPrestamos.obtenerPrestamosActivos();
                 if (activos.isEmpty()) System.out.println("No hay préstamos activos.");
                 else activos.forEach(System.out::println);
             }
             
-            case 4 -> {
+            case 5 -> {
                 String idUser = leerTexto("ID Usuario: ");
                 var userPrestamos = gestorPrestamos.obtenerPrestamosDeUsuario(idUser);
                 if (userPrestamos.isEmpty()) System.out.println("El usuario no tiene préstamos registrados.");
                 else userPrestamos.forEach(System.out::println);
             }
             
-            case 5 -> {
+            case 7 -> {
+                int inicio = leerEntero("Año de inicio: ");
+                int fin = leerEntero("Año de fin: ");
+                var res = recursoService.buscarPorRangoAnios(inicio, fin);
+                if (res.isEmpty()) System.out.println("No se encontraron recursos en ese rango de años.");
+                else res.forEach(System.out::println);
+            }
+
+            case 8 -> {
+                String autor = leerTexto("Nombre o parte del nombre del autor: ");
+                var res = recursoService.buscarLibrosPorAutor(autor);
+                if (res.isEmpty()) System.out.println("No se encontraron libros de ese autor.");
+                else res.forEach(System.out::println);
+            }
+            
+            case 6 -> {
                 System.out.println("1. Libros | 2. Películas | 3. Videojuegos");
                 int tipo = leerEntero("Seleccione tipo: ");
                 if (tipo == 1) recursoService.filtrarPorTipo(Libro.class).forEach(System.out::println);
@@ -252,50 +277,88 @@ public class Main {
                 else System.out.println("Tipo no válido.");
             }
             
-            case 6 -> {}
+            case 9 -> {}
             default -> System.out.println("Opción no válida.");
         }
     }
     
     private static void modificarRecurso() {
         String id = leerTexto("ID del recurso a modificar: ");
-        Recurso r = recursoService.buscarPorId(id);
-        if (r == null) {
+        Recurso recurso = recursoService.buscarPorId(id);
+        if (recurso == null) {
             System.out.println("No se encontró el recurso.");
             return;
         }
-        System.out.println("Modificando: " + r);
-        String nuevoTitulo = leerTexto("Nuevo Título (enter para mantener actual): ");
-        if (!nuevoTitulo.isEmpty()) r.setTitulo(nuevoTitulo);
+        System.out.println("Modificando: " + recurso);
+        String nuevoTitulo = leerTextoOpcional("Nuevo Título (enter para mantener actual): ");
+        if (!nuevoTitulo.isEmpty()) recurso.setTitulo(nuevoTitulo);
         
+        int minAnio = (recurso instanceof Libro) ? 1500 : (recurso instanceof Pelicula) ? 1895 : 1950;
         int nuevoAnio = leerEnteroPositivo("Nuevo Año (0 para mantener actual): ", 0);
-        if (nuevoAnio > 0) r.setAnio(nuevoAnio);
         
+        if (nuevoAnio > 0) {
+            if (nuevoAnio < minAnio) {
+                System.out.println("Año no válido. Se mantendrá el año actual.");
+            } else {
+            	recurso.setAnio(nuevoAnio);
+            }
+        }
+        
+        if (recurso instanceof Libro libro) {
+            String nuevoAutor = leerTextoOpcional("Nuevo Autor (enter para mantener actual): ");
+            if (!nuevoAutor.isEmpty()) libro.setAutor(nuevoAutor);
+            int nuevasPaginas = leerEnteroPositivo("Nuevas Páginas (0 para mantener actual): ", 0);
+            if (nuevasPaginas > 0) libro.setPaginas(nuevasPaginas);
+
+        } else if (recurso instanceof Pelicula pelicula) {
+            String nuevoDir = leerTextoOpcional("Nuevo Director (enter para mantener actual): ");
+            if (!nuevoDir.isEmpty()) pelicula.setDirector(nuevoDir);
+            int nuevaDuracion = leerEnteroPositivo("Nueva Duración (0 para mantener actual): ", 0);
+            if (nuevaDuracion > 0) pelicula.setDuracion(nuevaDuracion);
+
+        } else if (recurso instanceof Videojuego juego) {
+            String nuevaPlat = leerTextoOpcional("Nueva Plataforma (enter para mantener actual): ");
+            if (!nuevaPlat.isEmpty()) juego.setPlataforma(nuevaPlat);
+            int nuevoPegi = leerEnteroPositivo("Nuevo PEGI (0-18, o -1 para mantener actual): ", -1);
+            if (nuevoPegi >= 0 && nuevoPegi <= 18) juego.setPegi(nuevoPegi);
+        }
+
         recursoService.guardarCambios();
-        
-        System.out.println("Recurso modificado con éxito: " + r);
+        System.out.println("Recurso modificado con éxito: " + recurso);
     }
-    
+        
     private static void modificarUsuario() {
         String id = leerTexto("ID del usuario a modificar: ");
-        Usuario u = gestionUsuarios.buscarPorId(id);
-        if (u == null) {
+        Usuario user = gestionUsuarios.buscarPorId(id);
+        if (user == null) {
             System.out.println("No se encontró el usuario.");
             return;
         }
-        System.out.println("Modificando: " + u);
-        String nuevoNombre = leerTexto("Nuevo Nombre (enter para mantener actual): ");
-        if (!nuevoNombre.isEmpty()) u.setNombre(nuevoNombre);
+        System.out.println("Modificando: " + user);
+        String nuevoNombre = leerTextoOpcional("Nuevo Nombre (enter para mantener actual): ");
+        if (!nuevoNombre.isEmpty()) user.setNombre(nuevoNombre);
         
-        String nuevoEmail = leerTexto("Nuevo Email (enter para mantener actual): ");
-        if (!nuevoEmail.isEmpty()) u.setEmail(nuevoEmail);
+        String nuevoEmail = leerTextoOpcional("Nuevo Email (enter para mantener actual): ");
+        if (!nuevoEmail.isEmpty()) user.setEmail(nuevoEmail);
         
-        String nombreFinal = nuevoNombre.isEmpty() ? u.getNombre() : nuevoNombre;
-        String emailFinal = nuevoEmail.isEmpty() ? u.getEmail() : nuevoEmail;
+        String nombreFinal = nuevoNombre.isEmpty() ? user.getNombre() : nuevoNombre;
+        String emailFinal = nuevoEmail.isEmpty() ? user.getEmail() : nuevoEmail;
         gestionUsuarios.modificarUsuario(id, nombreFinal, emailFinal);
     }
     	
     private static String leerTexto(String mensaje) {
+    	String texto = "";
+        while (texto.isBlank()) {
+            System.out.print(mensaje);
+            texto = scanner.nextLine().trim();
+            if (texto.isBlank()) {
+                System.out.println("ERROR: El texto no puede estar vacío.");
+            }
+        }
+        return texto;
+    }
+
+    private static String leerTextoOpcional(String mensaje) {
         System.out.print(mensaje);
         return scanner.nextLine().trim();
     }
@@ -341,6 +404,16 @@ public class Main {
             } catch (NumberFormatException ignored) {}
         }
         return String.valueOf(max + 1);
+    }
+    
+    private static int leerEnteroRango(String mensaje, int min, int max) {
+        while (true) {
+            int valor = leerEntero(mensaje);
+            if (valor >= min && valor <= max) {
+                return valor;
+            }
+            System.out.println("ERROR: El valor debe estar entre " + min + " y " + max + ".");
+        }
     }
 
 }
