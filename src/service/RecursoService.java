@@ -5,10 +5,15 @@ import java.util.ArrayList;
 
 public class RecursoService {
     
-    private ArrayList<Recurso> lista = new ArrayList<>();
+    private ArrayList<Recurso> lista;
+
+    public RecursoService() {
+        this.lista = new ArrayList<>(FicheroRecursos.cargarRecursos());
+    }
 
     public void agregar(Recurso r) {
         lista.add(r);
+        FicheroRecursos.guardarRecursos(lista); 
     }
 
     public ArrayList<Recurso> obtenerTodos() {
@@ -27,7 +32,11 @@ public class RecursoService {
     public boolean eliminar(String id) {
         Recurso r = buscarPorId(id);
         if (r != null) {
-            return lista.remove(r);
+            boolean eliminado = lista.remove(r);
+            if (eliminado) {
+                FicheroRecursos.guardarRecursos(lista); 
+            }
+            return eliminado;
         }
         return false;
     }
@@ -36,6 +45,26 @@ public class RecursoService {
         ArrayList<Recurso> resultado = new ArrayList<>();
         for (Recurso r : lista) {
             if (r.getTitulo().toLowerCase().contains(titulo.toLowerCase())) {
+                resultado.add(r);
+            }
+        }
+        return resultado;
+    }
+    
+    public ArrayList<Recurso> obtenerDisponibles() {
+        ArrayList<Recurso> resultado = new ArrayList<>();
+        for (Recurso r : lista) {
+            if (!r.isPrestado()) {
+                resultado.add(r);
+            }
+        }
+        return resultado;
+    }
+
+    public ArrayList<Recurso> filtrarPorTipo(Class<?> tipo) {
+        ArrayList<Recurso> resultado = new ArrayList<>();
+        for (Recurso r : lista) {
+            if (tipo.isInstance(r)) {
                 resultado.add(r);
             }
         }
