@@ -29,9 +29,19 @@ public class FicheroPrestamos {
 
 		try (BufferedReader br = new BufferedReader(new FileReader(fichero))) {
 			String linea;
+			int numLinea = 0;
 
 			while ((linea = br.readLine()) != null) {
-				String[] p = linea.split(";");
+				numLinea++;
+				
+				if (linea.isBlank()) continue;
+				
+				try {
+					String[] p = linea.split(";");
+					
+					if (p.length != 5) {
+						throw new IllegalArgumentException("número de campos incorrecto");
+					}
 
 				String usuarioId = p[0];
 				String recursoId = p[1];
@@ -52,7 +62,11 @@ public class FicheroPrestamos {
 				pr.setFechaDevolucion(fechaDevolucion);
 
 				prestamos.add(pr);
+				
+			} catch (RuntimeException e) {
+				System.out.println("Línea " + numLinea + " incorrecta en prestamos.csv, se ignora: " + e.getMessage());
 			}
+		}
 
 		} catch (Exception e) {
 			System.out.println("Error leyendo prestamos.csv: " + e.getMessage());
