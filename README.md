@@ -161,5 +161,3 @@ java -cp bin view.Main
 * **Integración de ramas:** Al trabajar varias personas en paralelo en modelos, ficheros y préstamos, la unión de ramas dio problemas y requirió coordinación para mantener `main` funcional.
 * **Identidades de Git distintas:** Algunos commits se hicieron con configuraciones de usuario distintas en ordenadores diferentes, corrigiéndolo mediante configuración de nombre y correo.
 * **Conflicto controlado:** Provocado y resuelto con éxito un conflicto entre ramas (feature/test-conflicto y feature/pulir codigo) sobre el archivo `README.md` registrado en el historial de Git.
-
-```
