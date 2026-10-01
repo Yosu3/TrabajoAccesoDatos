@@ -1,4 +1,3 @@
-```markdown
 # 📚 Biblioteca Multimedia
 
 **Aplicación de consola en Java para la gestión integral de una biblioteca multimedia con usuarios, recursos y préstamos.**
