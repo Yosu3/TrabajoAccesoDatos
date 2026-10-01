@@ -68,7 +68,7 @@ public class GestorPrestamos {
 		Prestamo p = new Prestamo(usuario, recurso, "ACTIVO");
 		prestamos.add(p);
 
-		FicheroPrestamos.guardarPrestamos(prestamos);
+		FicheroRecursos.guardarRecursos(recursos);
 
 		return "Préstamo realizado correctamente.";
 	}
@@ -85,6 +85,7 @@ public class GestorPrestamos {
 		prestamo.setEstadoPrestamo("DEVUELTO");
 		prestamo.setFechaDevolucion(LocalDate.now());
 		FicheroPrestamos.guardarPrestamos(prestamos);
+		FicheroRecursos.guardarRecursos(recursos);
 
 		return "Préstamo devuelto correctamente.";
 	}
