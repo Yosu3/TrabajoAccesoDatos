@@ -62,33 +62,41 @@ public class Main {
     	switch (opcion) {
     	
     	case 1 -> {
-    		String id = leerTexto("ID: ");
+    		String id = generarIdRecurso();
     		String titulo = leerTexto("Título: ");
     		int anio = leerEntero("Año: ");
     		String autor = leerTexto("Autor: ");
     		int paginas = leerEntero("Páginas: ");
-    		recursoService.agregar(new Libro(id, titulo, anio, false, autor, paginas));
-    		System.out.println("Libro añadido correctamente.");
+    		Libro libro = new Libro(id, titulo, anio, false, autor, paginas);
+    	    recursoService.agregar(libro);
+    		System.out.println("\n Libro añadido correctamente.");
+    		System.out.println(libro);
+
     	}
     	
     	case 2 -> {
-    		String id = leerTexto("ID: ");
+    		String id = generarIdRecurso();
     		String titulo = leerTexto("Título: ");
     		int anio = leerEntero("Año: ");
     		String director = leerTexto("Director: ");
     		int duracion = leerEntero("Duración (min): ");
-    		recursoService.agregar(new Pelicula(id, titulo, anio, false, director, duracion));
-    		System.out.println("Película añadida correctamente.");
+    		Pelicula pelicula = new Pelicula(id, titulo, anio, false, director, duracion);
+    		recursoService.agregar(pelicula);
+    		System.out.println("\n Película añadida correctamente.");
+    		System.out.println(pelicula);
     	}
     	
     	case 3 -> {
-    		String id = leerTexto("ID: ");
+    		String id = generarIdRecurso();
     		String titulo = leerTexto("Título: ");
     		int anio = leerEntero("Año: ");
     		String plataforma = leerTexto("Plataforma: ");
     		int pegi = leerEntero("PEGI: ");
-    		recursoService.agregar(new Videojuego(id, titulo, anio, false, plataforma, pegi));
-    		System.out.println("Videojuego añadido correctamente.");
+    	    Videojuego videojuego = new Videojuego(id, titulo, anio, false, plataforma, pegi);
+    		recursoService.agregar(videojuego);
+    	    System.out.println("\n¡Videojuego añadido correctamente!");
+    	    System.out.println(videojuego);
+
     		}
     	
     	case 4 -> {
@@ -126,11 +134,17 @@ public class Main {
     	switch (opcion) {
     	
     	case 1 -> {
-    		String id = leerTexto("ID: ");
+    		String id = generarIdUsuario();
     		String nombre = leerTexto("Nombre: ");
     		String email = leerTexto("Email: ");
-    		System.out.println(gestionUsuarios.crearUsuario(new Usuario(id, nombre, email)) ? "Usuario creado." : "Error al crear usuario.");
-    	}
+    		Usuario usuario = new Usuario(id, nombre, email);
+    	    if (gestionUsuarios.crearUsuario(usuario)) {
+    	        System.out.println("\n¡Usuario creado correctamente!");
+    	        System.out.println(usuario);
+    	    } else {
+    	        System.out.println("Error al crear usuario.");
+        }
+    }
     	
     	case 2 -> {
     		System.out.println("\n-- Lista de Usuarios --");
@@ -138,6 +152,7 @@ public class Main {
     		System.out.println(u);
     	}
     }
+    	
     	case 3 -> {
     		String id = leerTexto("ID a buscar: ");
     		Usuario u = gestionUsuarios.buscarPorId(id);
@@ -251,4 +266,27 @@ public class Main {
             }
         }
     }
+    
+    private static String generarIdRecurso() {
+        int max = 0;
+        for (Recurso r : recursoService.obtenerTodos()) {
+            try {
+                int idActual = Integer.parseInt(r.getId());
+                if (idActual > max) max = idActual;
+            } catch (NumberFormatException ignored) {}
+        }
+        return String.valueOf(max + 1);
+    }
+
+    private static String generarIdUsuario() {
+        int max = 0;
+        for (Usuario u : gestionUsuarios.listarUsuarios()) {
+            try {
+                int idActual = Integer.parseInt(u.getId());
+                if (idActual > max) max = idActual;
+            } catch (NumberFormatException ignored) {}
+        }
+        return String.valueOf(max + 1);
+    }
+
 }
