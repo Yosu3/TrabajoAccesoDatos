@@ -137,3 +137,4 @@ Integración de ramas: al trabajar varias personas en paralelo en modelos, fiche
 Identidades de Git distintas: algunos commits se hicieron con configuraciones de usuario distintas en ordenadores diferentes, y lo corregimos configurando cada uno su propio nombre y correo.
 Conflicto controlado: (completar aquí: qué ramas chocaron, en qué fichero y cómo se resolvió).
 
+Nota: version revisada por el grupo
