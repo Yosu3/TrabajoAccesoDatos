@@ -68,7 +68,7 @@ public class GestorPrestamos {
 		Prestamo p = new Prestamo(usuario, recurso, "ACTIVO");
 		prestamos.add(p);
 
-		FicheroPrestamos.guardarPrestamos(prestamos);
+		FicheroRecursos.guardarRecursos(recursos);
 
 		return "Préstamo realizado correctamente.";
 	}
@@ -85,6 +85,7 @@ public class GestorPrestamos {
 		prestamo.setEstadoPrestamo("DEVUELTO");
 		prestamo.setFechaDevolucion(LocalDate.now());
 		FicheroPrestamos.guardarPrestamos(prestamos);
+		FicheroRecursos.guardarRecursos(recursos);
 
 		return "Préstamo devuelto correctamente.";
 	}
@@ -107,6 +108,24 @@ public class GestorPrestamos {
 			}
 		}
 		return resultado;
+	}
+	
+	public boolean tienePrestamosActivosUsuario(String idUsuario) {
+		for (Prestamo p : prestamos) {
+			if (p.getUsuario().getId().equals(idUsuario) && "ACTIVO".equalsIgnoreCase(p.getEstadoPrestamo())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean tienePrestamosActivosRecurso(String idRecurso) {
+		for (Prestamo p : prestamos) {
+			if (p.getRecurso().getId().equals(idRecurso) && "ACTIVO".equalsIgnoreCase(p.getEstadoPrestamo())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

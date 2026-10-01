@@ -52,6 +52,6 @@ public abstract class Recurso {
     @Override
     public String toString() {
         String estadoPrestamo = prestado ? "Prestado" : "Disponible";
-        return "ID: " + id + " | Título: " + titulo + " (" + anio + ") | Estado: " + estadoPrestamo;
+        return "ID: " + id + " | Título: " + titulo + " | Año: " + anio + " | Estado: " + estadoPrestamo;
     }
 }

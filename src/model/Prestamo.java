@@ -61,7 +61,9 @@ public class Prestamo {
 	
 	@Override
 	public String toString() {
-		return "Prestamo [usuario=" + usuario + ", recurso=" + recurso + ", estado=" + estadoPrestamo
-				+ ", fechaPrestamo=" + fechaPrestamo + ", fechaDevolucion=" + fechaDevolucion + "]";
+	    String dev = (fechaDevolucion != null) ? fechaDevolucion.toString() : "Pendiente";
+	    return "PRÉSTAMO [" + estadoPrestamo + "] | Usuario: " + usuario.getNombre() + " (ID: " + usuario.getId() + ")"
+	            + " | Recurso: " + recurso.getTitulo() + " (ID: " + recurso.getId() + ")"
+	            + " | Fecha Salida: " + fechaPrestamo + " | Devolución: " + dev;
 	}
 }
