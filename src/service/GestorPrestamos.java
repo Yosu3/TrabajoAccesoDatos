@@ -108,5 +108,23 @@ public class GestorPrestamos {
 		}
 		return resultado;
 	}
+	
+	public boolean tienePrestamosActivosUsuario(String idUsuario) {
+		for (Prestamo p : prestamos) {
+			if (p.getUsuario().getId().equals(idUsuario) && "ACTIVO".equalsIgnoreCase(p.getEstadoPrestamo())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean tienePrestamosActivosRecurso(String idRecurso) {
+		for (Prestamo p : prestamos) {
+			if (p.getRecurso().getId().equals(idRecurso) && "ACTIVO".equalsIgnoreCase(p.getEstadoPrestamo())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

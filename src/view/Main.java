@@ -55,8 +55,9 @@ public class Main {
     	System.out.println("3. Crear Videojuego");
     	System.out.println("4. Listar Recursos");
     	System.out.println("5. Buscar Recurso por ID");
-    	System.out.println("6. Eliminar Recurso");
-    	System.out.println("7. Volver");
+    	System.out.println("6. Modificar Recurso"); 
+        System.out.println("7. Eliminar Recurso");  
+        System.out.println("8. Volver");
     	
     	int opcion = leerEntero("Seleccione una opción: ");
     	switch (opcion) {
@@ -64,9 +65,9 @@ public class Main {
     	case 1 -> {
     		String id = generarIdRecurso();
     		String titulo = leerTexto("Título: ");
-    		int anio = leerEntero("Año: ");
+    		int anio = leerEnteroPositivo("Año: (mínimo 1500): ", 1500);
     		String autor = leerTexto("Autor: ");
-    		int paginas = leerEntero("Páginas: ");
+    		int paginas = leerEnteroPositivo("Páginas (mínimo 1): ", 1);
     		Libro libro = new Libro(id, titulo, anio, false, autor, paginas);
     	    recursoService.agregar(libro);
     		System.out.println("\n Libro añadido correctamente.");
@@ -77,9 +78,9 @@ public class Main {
     	case 2 -> {
     		String id = generarIdRecurso();
     		String titulo = leerTexto("Título: ");
-    		int anio = leerEntero("Año: ");
+    		int anio = leerEnteroPositivo("Año (mínimo 1895): ", 1895);
     		String director = leerTexto("Director: ");
-    		int duracion = leerEntero("Duración (min): ");
+    		int duracion = leerEnteroPositivo("Duración en min (mínimo 1): ", 1);
     		Pelicula pelicula = new Pelicula(id, titulo, anio, false, director, duracion);
     		recursoService.agregar(pelicula);
     		System.out.println("\n Película añadida correctamente.");
@@ -89,9 +90,9 @@ public class Main {
     	case 3 -> {
     		String id = generarIdRecurso();
     		String titulo = leerTexto("Título: ");
-    		int anio = leerEntero("Año: ");
+    		int anio = leerEnteroPositivo("Año (mínimo 1950): ", 1950);
     		String plataforma = leerTexto("Plataforma: ");
-    		int pegi = leerEntero("PEGI: ");
+    		int pegi = leerEnteroPositivo("PEGI (0 a 18): ", 0);
     	    Videojuego videojuego = new Videojuego(id, titulo, anio, false, plataforma, pegi);
     		recursoService.agregar(videojuego);
     	    System.out.println("\n¡Videojuego añadido correctamente!");
@@ -111,13 +112,15 @@ public class Main {
     		Recurso r = recursoService.buscarPorId(id);
     		System.out.println(r != null ? r : "Recurso no encontrado.");
     		}
+    	
+    	case 6 -> modificarRecurso();
     		
-    	case 6 -> {
+    	case 7 -> {
     		String id = leerTexto("ID a eliminar: ");
-    		System.out.println(recursoService.eliminar(id) ? "Eliminado correctamente." : "No se encontró el recurso.");
+    		System.out.println(recursoService.eliminar(id, gestorPrestamos) ? "Eliminado correctamente." : "No se pudo eliminar.");
     		}
     	
-    	case 7 -> {}
+    	case 8 -> {}
     	default -> System.out.println("Opción no válida.");
     	}
     }
@@ -127,8 +130,9 @@ public class Main {
     	System.out.println("1. Crear Usuario");
     	System.out.println("2. Listar Usuarios");
     	System.out.println("3. Buscar Usuario por ID");
-    	System.out.println("4. Eliminar Usuario");
-    	System.out.println("5. Volver");
+    	System.out.println("4. Modificar Usuario"); 
+        System.out.println("5. Eliminar Usuario");  
+        System.out.println("6. Volver");
     	
     	int opcion = leerEntero("Seleccione una opción: ");
     	switch (opcion) {
@@ -159,12 +163,14 @@ public class Main {
     		System.out.println(u != null ? u : "Usuario no encontrado.");
     	}
     	
-    	case 4 -> {
+    	case 4 -> modificarUsuario();
+    	
+    	case 5 -> {
     		String id = leerTexto("ID a eliminar: ");
-    		System.out.println(gestionUsuarios.eliminarUsuario(id) ? "Usuario eliminado." : "Usuario no encontrado.");
+    		System.out.println(gestionUsuarios.eliminarUsuario(id, gestorPrestamos) ? "Usuario eliminado." : "No se pudo eliminar.");
     	}
     	
-    		case 5 -> {}
+    	case 6 -> {}
     		default -> System.out.println("Opción no válida.");
     	}
     }
@@ -178,18 +184,18 @@ public class Main {
         int opcion = leerEntero("Seleccione una opción: ");
         switch (opcion) {
         
-            case 1 -> {
+        case 1 -> {
                 String idUsuario = leerTexto("ID Usuario: ");
                 String idRecurso = leerTexto("ID Recurso: ");
                 System.out.println(gestorPrestamos.realizarPrestamo(idUsuario, idRecurso));
             }
             
-            case 2 -> {
+        case 2 -> {
                 String idRecurso = leerTexto("ID Recurso a devolver: ");
                 System.out.println(gestorPrestamos.devolverPrestamo(idRecurso));
             }
             
-            case 3 -> {}
+        case 3 -> {}
             default -> System.out.println("Opción no válida.");
         }
     }
@@ -250,6 +256,44 @@ public class Main {
             default -> System.out.println("Opción no válida.");
         }
     }
+    
+    private static void modificarRecurso() {
+        String id = leerTexto("ID del recurso a modificar: ");
+        Recurso r = recursoService.buscarPorId(id);
+        if (r == null) {
+            System.out.println("No se encontró el recurso.");
+            return;
+        }
+        System.out.println("Modificando: " + r);
+        String nuevoTitulo = leerTexto("Nuevo Título (enter para mantener actual): ");
+        if (!nuevoTitulo.isEmpty()) r.setTitulo(nuevoTitulo);
+        
+        int nuevoAnio = leerEnteroPositivo("Nuevo Año (0 para mantener actual): ", 0);
+        if (nuevoAnio > 0) r.setAnio(nuevoAnio);
+        
+        recursoService.guardarCambios();
+        
+        System.out.println("Recurso modificado con éxito: " + r);
+    }
+    
+    private static void modificarUsuario() {
+        String id = leerTexto("ID del usuario a modificar: ");
+        Usuario u = gestionUsuarios.buscarPorId(id);
+        if (u == null) {
+            System.out.println("No se encontró el usuario.");
+            return;
+        }
+        System.out.println("Modificando: " + u);
+        String nuevoNombre = leerTexto("Nuevo Nombre (enter para mantener actual): ");
+        if (!nuevoNombre.isEmpty()) u.setNombre(nuevoNombre);
+        
+        String nuevoEmail = leerTexto("Nuevo Email (enter para mantener actual): ");
+        if (!nuevoEmail.isEmpty()) u.setEmail(nuevoEmail);
+        
+        String nombreFinal = nuevoNombre.isEmpty() ? u.getNombre() : nuevoNombre;
+        String emailFinal = nuevoEmail.isEmpty() ? u.getEmail() : nuevoEmail;
+        gestionUsuarios.modificarUsuario(id, nombreFinal, emailFinal);
+    }
     	
     private static String leerTexto(String mensaje) {
         System.out.print(mensaje);
@@ -264,6 +308,16 @@ public class Main {
             } catch (NumberFormatException e) {
                 System.out.println("ERROR: Debe introducir un número entero válido.");
             }
+        }
+    }
+    
+    private static int leerEnteroPositivo(String mensaje, int min) {
+        while (true) {
+            int valor = leerEntero(mensaje);
+            if (valor >= min) {
+                return valor;
+            }
+            System.out.println("ERROR: El valor debe ser mayor o igual a " + min + ".");
         }
     }
     

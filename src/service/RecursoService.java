@@ -28,17 +28,31 @@ public class RecursoService {
         }
         return null;
     }
+    
+    public void guardarCambios() {
+        FicheroRecursos.guardarRecursos(lista);
+    }
 
-    public boolean eliminar(String id) {
-        Recurso r = buscarPorId(id);
+    public boolean eliminar(String id, GestorPrestamos gestorPrestamos) {
+    	if (gestorPrestamos != null && gestorPrestamos.tienePrestamosActivosRecurso(id)) {
+            System.out.println("ERROR: No se puede eliminar el recurso porque está actualmente prestado.");
+            return false;
+        }
+    	
+    	Recurso r = buscarPorId(id);
         if (r != null) {
             boolean eliminado = lista.remove(r);
             if (eliminado) {
-                FicheroRecursos.guardarRecursos(lista); 
-            }
-            return eliminado;
+            	FicheroRecursos.guardarRecursos(lista);
+    	   	
         }
+            return eliminado;
+      }
         return false;
+    }
+    
+    public boolean eliminar(String id) {
+        return eliminar(id, null);
     }
 
     public ArrayList<Recurso> buscarPorTitulo(String titulo) {

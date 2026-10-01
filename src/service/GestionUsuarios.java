@@ -65,7 +65,12 @@ public class GestionUsuarios {
 		return true;
 	}
 
-	public boolean eliminarUsuario(String id) {
+	public boolean eliminarUsuario(String id, GestorPrestamos gestorPrestamos) {
+		if (gestorPrestamos != null && gestorPrestamos.tienePrestamosActivosUsuario(id)) {
+			System.out.println("ERROR: No se puede eliminar el usuario porque tiene préstamos activos.");
+			return false;
+		}
+		
 		Usuario u = buscarPorId(id);
 		if (u == null)
 			return false;
@@ -73,5 +78,9 @@ public class GestionUsuarios {
 		usuarios.remove(u);
 		FicheroUsuarios.guardarUsuarios(usuarios);
 		return true;
+	}
+	
+	public boolean eliminarUsuario(String id) {
+		return eliminarUsuario(id, null);
 	}
 }
