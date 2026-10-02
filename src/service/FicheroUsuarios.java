@@ -28,12 +28,15 @@ public class FicheroUsuarios {
 			String linea;
 
 			while ((linea = br.readLine()) != null) {
-				String[] partes = linea.split(";");
 
-				if (partes.length != 3) {
-					System.out.println("Línea incorrecta en usuarios.csv: " + linea);
-					continue;
-				}
+			    if (linea.isBlank()) continue;                 
+
+			    String[] partes = linea.split(";");            
+
+			    if (partes.length != 3) {
+			        System.out.println("Línea incorrecta en usuarios.csv: " + linea);
+			        continue;
+			    }
 
 				String id = partes[0];
 				String nombre = partes[1];

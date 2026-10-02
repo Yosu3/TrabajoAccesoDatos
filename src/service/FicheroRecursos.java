@@ -29,9 +29,19 @@ public class FicheroRecursos {
 
 		try (BufferedReader br = new BufferedReader(new FileReader(fichero))) {
 			String linea;
+			int numLinea = 0;
 
 			while ((linea = br.readLine()) != null) {
-				String[] p = linea.split(";");
+				numLinea++;
+				
+				if (linea.isBlank()) continue;
+				
+				try {
+					String[] p = linea.split(";");
+					
+					if (p.length != 7) {
+						throw new IllegalArgumentException("número de campos incorrecto");
+					}
 
 				String tipo = p[0];
 				String id = p[1];
@@ -55,7 +65,11 @@ public class FicheroRecursos {
 				default:
 					System.out.println("Tipo desconocido: " + tipo);
 				}
+				
+			} catch (RuntimeException e) {
+				System.out.println("Línea " + numLinea + " incorrecta en recursos.csv, se ignora: " + e.getMessage());
 			}
+		}
 
 		} catch (Exception e) {
 			System.out.println("Error leyendo recursos.csv: " + e.getMessage());
